@@ -1,0 +1,61 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    phone=models.CharField('telefon raqam',max_length=13)
+    # rasm=models.ImageField()
+    status_gender=(
+        ('direktor','direktor'),
+        ('yordamchi','yordamchi')
+    )
+    status=models.CharField(choices=status_gender,max_length=10,default='yordamchi')
+
+class Mahsulot(models.Model):
+    mahsulot_id=models.PositiveIntegerField()
+    mahsulot_nomi=models.CharField(max_length=1000)
+
+class Ishturi_or_Bolim(models.Model):
+    name=models.CharField(max_length=100)
+    ish_id=models.IntegerField(default=1,unique=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.name,self.ish_id)
+
+class Xodim(models.Model):
+    class StatusChoices(models.TextChoices):
+        gender_male='erkak','Erkak'
+        gender_female='ayol','Ayol'
+    status=models.CharField(choices=StatusChoices.choices,default=StatusChoices.gender_male,max_length=10)
+    ism=models.CharField(max_length=50,error_messages={'required': 'this field is required'})
+    familiya=models.CharField(max_length=50)                
+    # rasm=models.ImageField()
+    phone=models.CharField(max_length=13)
+    ish_turi=models.ForeignKey(Ishturi_or_Bolim,on_delete=models.CASCADE)
+    id_raqam=models.IntegerField(default=1,unique=True)
+
+    def is_upperclass(self):
+        return self.status in {self.gender_female,self.gender_male}
+
+class Xato(models.Model):
+    xato_id=models.IntegerField()
+    problem=models.TextField()
+
+    def __str__(self):
+        return '{} {}'.format(self.xato_id,self.problem)
+
+class Missed(models.Model):
+    xodim_id=models.ForeignKey(Xodim,on_delete=models.CASCADE)
+    xato_id=models.ForeignKey(Xato,on_delete=models.CASCADE)
+    xato_soni=models.PositiveIntegerField()
+    yaroqli_product_soni=models.PositiveIntegerField()
+    ish_vaqti=models.PositiveIntegerField()
+    created=models.DateTimeField(auto_now=True, db_comment="Date and time when the article was published",
+)
+    updated=models.DateTimeField(auto_now_add=True)
+    # rasm=models.ImageField()
+    izoh=models.TextField()
+    user_id=models.ForeignKey(User,on_delete=models.CASCADE)
+    mahsulot_id=models.ForeignKey(Mahsulot,on_delete=models.CASCADE)
+   
+    def __str__(self):
+        return '{} {}'.format(self.xodim_id,self.izoh[:20])
