@@ -27,7 +27,7 @@ class XodimSerializer(ModelSerializer):
         model=Xodim
         fields=[
             "id",
-            "status"
+            "status",
             "ism".capitalize,
             "familiya".capitalize,
             "phone",
@@ -51,14 +51,14 @@ class XatoSerializer(ModelSerializer):
     class Meta:
         model=Xato
         fields=[
-            "id"
+            "id",
             "xato_id",
             "problem"
          ]
         
 class MissedSerializer(ModelSerializer):
     class Meta:
-        model=Missed
+        model=Workinspection
         fields=[
             "id",
             "xodim_id",
